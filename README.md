@@ -2,8 +2,6 @@
 
 [Download](https://github.com/GitRuozhi/dsh-tray/releases/latest)
 
-## English
-
 A minimal DeepSeek Harness Windows tray program — the most basic Windows program experience, unlike other heavyweight desktop clients. You can:
 
 - Double-click the `.exe` or a shortcut to open DeepSeek Harness directly
@@ -14,7 +12,12 @@ A minimal DeepSeek Harness Windows tray program — the most basic Windows progr
 
 If your DeepSeek Harness startup config differs from mine, you can let DSH reconfigure and compile it for you.
 
-## 中文
+
+
+
+# DSH Tray
+
+[下载](https://github.com/GitRuozhi/dsh-tray/releases/latest)
 
 极简的 DeepSeek Harness Windows 托盘程序 —— 提供最基本的 Windows 程序体验，没有其他桌面客户端那样厚重。您可以：
 
