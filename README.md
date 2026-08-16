@@ -1,6 +1,6 @@
 # DSH Tray
 
-下载 / Download: <https://github.com/GitRuozhi/dsh-tray/releases/latest>
+[Download](https://github.com/GitRuozhi/dsh-tray/releases/latest)
 
 ## English
 
