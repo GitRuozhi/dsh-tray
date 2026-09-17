@@ -19,21 +19,21 @@ using System.Windows.Forms;
 [assembly: AssemblyProduct("DeepSeek Harness Tray")]
 [assembly: AssemblyCompany("GitRuozhi")]
 [assembly: AssemblyCopyright("Copyright (c) 2026 GitRuozhi")]
-[assembly: AssemblyVersion("0.2.0.0")]
-[assembly: AssemblyFileVersion("0.2.0.0")]
-[assembly: AssemblyInformationalVersion("0.2.0")]
+[assembly: AssemblyVersion("0.2.1.0")]
+[assembly: AssemblyFileVersion("0.2.1.0")]
+[assembly: AssemblyInformationalVersion("0.2.1")]
 
 // DeepSeek Harness (DSH) Windows 系统托盘 —— 单文件自包含
 // 编译：compile.cmd
 class DshTray
 {
     // ===== 可配置 =====
-    const string AppVersion = "0.2.0";
+    const string AppVersion = "0.2.1";
     const string GithubOwner = "GitRuozhi";
     const string GithubRepo = "dsh-tray";
     const int DefaultPort = 3080;
     const string DefaultUrl = "http://127.0.0.1:3080/";
-    const string DshPackage = "@deepseek-ai/dsh@latest";
+    const string StartCommand = "npx -y @deepseek-ai/dsh web --no-open";
     const bool AutoStartOnLaunch = true;
     const bool AutoOpenFrontend = true;
     const bool AutoUpdateTray = true;
@@ -206,7 +206,7 @@ class DshTray
 
         try
         {
-            var psi = new ProcessStartInfo("cmd.exe", "/c npx -y " + DshPackage + " -- web --no-open")
+            var psi = new ProcessStartInfo("cmd.exe", "/c " + StartCommand)
             {
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
@@ -218,9 +218,6 @@ class DshTray
                 WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
             };
             psi.EnvironmentVariables["PATH"] = NodePathEnv();
-            psi.EnvironmentVariables["npm_config_update_notifier"] = "false";
-            psi.EnvironmentVariables["npm_config_prefer_online"] = "true";
-            psi.EnvironmentVariables["npm_config_progress"] = "false";
             psi.EnvironmentVariables["NO_COLOR"] = "1";
 
             dshHostProcess = Process.Start(psi);
