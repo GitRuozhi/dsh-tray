@@ -9,31 +9,24 @@ A minimal DeepSeek Harness Windows tray program, the most basic Windows program 
 - See the DeepSeek Harness status in the Windows tray
 - Control the DeepSeek Harness backend from the tray
 - Double-click the tray icon to open the DeepSeek Harness frontend
-- DeepSeek Harness updates itself: each start is `npx @deepseek-ai/dsh web`
 
 Requires [Node.js](https://nodejs.org/) `^22.19` or `>=24` on PATH.
 
-## Updates (v0.2)
+Each start runs `npx @deepseek-ai/dsh web`, so DeepSeek Harness follows npm `latest` on its own. The tray does not update itself.
+
+## v0.2
 
 DeepSeek Harness 0.1.2+ prints a one-process launch token and requires that URL to open the Web UI. Older tray builds opened `http://127.0.0.1:3080` without the token, so the page returned 401.
 
-This build:
-
-- Starts `npx -y @deepseek-ai/dsh web --no-open` (same auto-update as the official command; `-y` is for the hidden process, `--no-open` lets the tray open the token URL)
-- Reads the `dsh web: http://127.0.0.1:3080/?token=…` line and opens that URL
-- The tray exe can also replace itself from GitHub Releases (right-click **检查更新**)
+This build starts `npx -y @deepseek-ai/dsh web --no-open`, reads the `dsh web: http://127.0.0.1:3080/?token=…` line, and opens that URL. `-y` is for the hidden process; `--no-open` lets the tray open the browser.
 
 If your DeepSeek Harness startup config differs from mine, you can let DSH reconfigure and compile it for you.
-
-v0.1.0 cannot update itself. Download [v0.2](https://github.com/GitRuozhi/dsh-tray/releases/latest) once; later tray versions replace the exe automatically.
 
 Compile:
 
 ```bat
 compile.cmd
 ```
-
-Publish a new tray version by pushing a `v*` tag; GitHub Actions compiles `dsh-tray.exe` and attaches it to the release.
 
 ---
 
@@ -48,28 +41,21 @@ Publish a new tray version by pushing a `v*` tag; GitHub Actions compiles `dsh-t
 - 在 Windows 托盘显示 DeepSeek Harness 运行状态
 - 在托盘控制 DeepSeek Harness 后端
 - 双击托盘图标，打开 DeepSeek Harness 前端
-- DeepSeek Harness 的更新就是每次启动时的 `npx @deepseek-ai/dsh web`
 
 需要已加入 PATH 的 [Node.js](https://nodejs.org/) `^22.19` 或 `>=24`。
 
-## 更新说明（v0.2）
+每次启动都走 `npx @deepseek-ai/dsh web`，DeepSeek Harness 自己跟 npm `latest`。托盘不会更新自己。
+
+## v0.2
 
 DeepSeek Harness 0.1.2 起会打印一次性进程启动 token，必须用这条 URL 打开 Web UI。旧版托盘只打开 `http://127.0.0.1:3080`，页面会 401。
 
-本版本会：
-
-- 启动命令是 `npx -y @deepseek-ai/dsh web --no-open`（和官方一样走 npm latest；`-y` 给隐藏进程，`--no-open` 让托盘去打开带 token 的地址）
-- 捕获 `dsh web: http://127.0.0.1:3080/?token=…` 再打开前端
-- 托盘 exe 自己还可以从 GitHub Releases 替换（右键 **检查更新**）
+本版本启动 `npx -y @deepseek-ai/dsh web --no-open`，捕获 `dsh web: http://127.0.0.1:3080/?token=…` 再打开前端。`-y` 给隐藏进程，`--no-open` 让托盘去开浏览器。
 
 如果您的 DeepSeek Harness 启动配置与我不同，您可以让 DSH 为您重新配置并编译。
-
-v0.1.0 不能自己更新。请先手动下载一次 [v0.2](https://github.com/GitRuozhi/dsh-tray/releases/latest)，之后的托盘版本会自动替换 exe。
 
 编译：
 
 ```bat
 compile.cmd
 ```
-
-发布新托盘版本：推送 `v*` 标签即可。GitHub Actions 会编译 `dsh-tray.exe` 并挂到 Release 上。
