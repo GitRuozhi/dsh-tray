@@ -5,56 +5,34 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
-using System.IO;
 using System.Management;
 using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("DSH Tray")]
-[assembly: AssemblyProduct("DeepSeek Harness Tray")]
-[assembly: AssemblyCompany("GitRuozhi")]
-[assembly: AssemblyCopyright("Copyright (c) 2026 GitRuozhi")]
-[assembly: AssemblyVersion("0.2.2.0")]
-[assembly: AssemblyFileVersion("0.2.2.0")]
-[assembly: AssemblyInformationalVersion("0.2.2")]
-
 // DeepSeek Harness (DSH) Windows 系统托盘 —— 单文件自包含
-// 编译：compile.cmd
+// 编译：csc.exe /target:winexe /win32icon:whale.ico /r:System.Management.dll /out:dsh-tray.exe dsh-tray.cs
 class DshTray
 {
     // ===== 可配置 =====
-    const int DefaultPort = 3080;
-    const string DefaultUrl = "http://127.0.0.1:3080/";
+    const int Port = 3080;
+    const string Url = "http://127.0.0.1:3080";
     const string StartCommand = "npx -y @deepseek-ai/dsh web --no-open";
     const bool AutoStartOnLaunch = true;
     const bool AutoOpenFrontend = true;
     const int RefreshMs = 1500;
-    const int AutoOpenSeconds = 180;
     // ==================
 
     const string PathData = "M48.8354 10.0479C48.3232 9.79199 48.1025 10.2798 47.8032 10.5278C47.7007 10.6079 47.6143 10.7119 47.5273 10.8076C46.7793 11.624 45.9048 12.1597 44.7622 12.0957C43.0923 12 41.666 12.5356 40.4058 13.8398C40.1377 12.2319 39.2476 11.272 37.8926 10.6558C37.1836 10.3359 36.4668 10.0156 35.9702 9.31982C35.6235 8.82373 35.5293 8.27197 35.356 7.72754C35.2456 7.3999 35.1353 7.06396 34.7651 7.00781C34.3633 6.94385 34.2056 7.2876 34.0479 7.57568C33.418 8.75195 33.1733 10.0479 33.1973 11.3599C33.2524 14.312 34.4736 16.6641 36.8999 18.3359C37.1758 18.5278 37.2466 18.7197 37.1597 19C36.9946 19.5757 36.7974 20.1357 36.624 20.7119C36.5137 21.0801 36.3486 21.1597 35.9624 21C34.6309 20.4321 33.481 19.5918 32.4644 18.5757C30.7393 16.8721 29.1792 14.9917 27.2334 13.52C26.7764 13.1758 26.3193 12.856 25.8467 12.5518C23.8618 10.584 26.1069 8.96777 26.627 8.77588C27.1704 8.57568 26.8159 7.8877 25.0591 7.896C23.3022 7.90381 21.6953 8.50391 19.647 9.30371C19.3477 9.42383 19.0322 9.51172 18.7095 9.58398C16.8501 9.22363 14.9199 9.14355 12.9033 9.37598C9.10596 9.80762 6.07275 11.6396 3.84326 14.7681C1.16455 18.5278 0.53418 22.7998 1.30664 27.2559C2.11768 31.9521 4.46582 35.8398 8.07373 38.8799C11.8159 42.0322 16.1255 43.5762 21.041 43.2803C24.0269 43.104 27.3516 42.6963 31.1016 39.4561C32.0469 39.936 33.0396 40.1279 34.686 40.272C35.9546 40.3921 37.1758 40.208 38.1211 40.0078C39.6021 39.688 39.4995 38.2881 38.9639 38.0322C34.623 35.9678 35.5762 36.8081 34.71 36.1279C36.9155 33.4639 40.2402 30.6958 41.54 21.728C41.6426 21.0161 41.5557 20.5679 41.54 19.9917C41.5322 19.6396 41.6108 19.5039 42.0049 19.4639C43.0923 19.3359 44.1479 19.0317 45.1167 18.4878C47.9292 16.9199 49.064 14.3438 49.3315 11.2559C49.3711 10.7837 49.3237 10.2959 48.8354 10.0479ZM24.3262 37.8398C20.1196 34.4639 18.0791 33.3521 17.2358 33.3999C16.4482 33.4482 16.5898 34.3682 16.7632 34.9678C16.9443 35.5601 17.1812 35.9683 17.5117 36.4878C17.7402 36.832 17.8979 37.3442 17.2832 37.728C15.9282 38.584 13.5728 37.4399 13.4624 37.3838C10.7207 35.7358 8.42822 33.5601 6.81348 30.584C5.25342 27.7197 4.34766 24.6479 4.19775 21.3677C4.1582 20.5757 4.38672 20.2959 5.15869 20.1519C6.17529 19.96 7.22314 19.9199 8.23926 20.0718C12.5327 20.7119 16.1885 22.6719 19.2529 25.7759C21.002 27.5439 22.3252 29.6558 23.6885 31.7202C25.1377 33.9121 26.6978 36 28.6831 37.7119C29.3843 38.312 29.9434 38.7681 30.479 39.104C28.8643 39.2881 26.1699 39.3281 24.3262 37.8398ZM26.3433 24.6001C26.3433 24.248 26.6191 23.9678 26.9658 23.9678C27.0444 23.9678 27.1152 23.9839 27.1782 24.0078C27.2651 24.04 27.3438 24.0879 27.4067 24.1602C27.5171 24.272 27.5801 24.4321 27.5801 24.6001C27.5801 24.9521 27.3042 25.2319 26.9575 25.2319C26.6108 25.2319 26.3433 24.9521 26.3433 24.6001ZM32.6064 27.8799C32.2046 28.0479 31.8027 28.1919 31.4165 28.208C30.8179 28.2397 30.1641 27.9922 29.8096 27.688C29.2583 27.2158 28.8643 26.9521 28.6987 26.1279C28.6279 25.7759 28.6675 25.2319 28.7305 24.9199C28.8721 24.248 28.7144 23.8159 28.2495 23.4238C27.8716 23.104 27.3911 23.0161 26.8633 23.0161C26.666 23.0161 26.4849 22.9277 26.3511 22.856C26.1304 22.7441 25.9492 22.4639 26.1226 22.1201C26.1777 22.0078 26.4458 21.7358 26.5088 21.688C27.2256 21.272 28.0527 21.4077 28.8169 21.7197C29.5259 22.0161 30.0615 22.5601 30.834 23.3281C31.6216 24.2559 31.7632 24.5117 32.2124 25.208C32.5669 25.752 32.8901 26.312 33.1104 26.9521C33.2446 27.3521 33.0713 27.6802 32.6064 27.8799Z";
 
-    static readonly Regex LaunchUrlRe = new Regex(@"dsh web:\s*(https?://[^\s]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    static readonly Regex AnsiRe = new Regex(@"\x1B\[[0-9;]*[A-Za-z]", RegexOptions.Compiled);
-
-    static Mutex appMutex;
-    static Form ui;
+    static System.Threading.Mutex appMutex;
     static NotifyIcon tray;
     static ToolStripMenuItem statusItem;
     static Icon iconRunning, iconStopped;
     static DateTime autoOpenUntil = DateTime.MinValue;
-    static bool lastRunning;
-    static bool lastRunningSet;
-    static bool startingDsh;
-    static int listenPort = DefaultPort;
-    static string fallbackUrl = DefaultUrl;
-    static string launchUrl;
-    static Process dshHostProcess;
-    static string lastHostHint;
+    static bool lastRunning = false;
+    static bool lastRunningSet = false;
+    static string launchUrl = Url;
 
     [STAThread]
     static void Main()
@@ -63,46 +41,17 @@ class DshTray
         Application.SetCompatibleTextRenderingDefault(false);
 
         bool createdNew;
-        appMutex = new Mutex(true, @"Local\dsh-tray-single-instance", out createdNew);
+        appMutex = new System.Threading.Mutex(true, @"Local\dsh-tray-single-instance", out createdNew);
         if (!createdNew)
         {
             MessageBox.Show("DeepSeek Harness 托盘已在运行。", "DeepSeek Harness", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
-        iconRunning = MakeWhaleIcon(Color.FromArgb(77, 107, 254));
-        iconStopped = MakeWhaleIcon(Color.FromArgb(154, 160, 166));
+        iconRunning = MakeWhaleIcon(Color.FromArgb(77, 107, 254));   // DeepSeek 蓝 #4D6BFE
+        iconStopped = MakeWhaleIcon(Color.FromArgb(154, 160, 166));  // 灰
 
-        ui = new Form
-        {
-            FormBorderStyle = FormBorderStyle.None,
-            ShowInTaskbar = false,
-            Opacity = 0,
-            Size = new Size(0, 0),
-            StartPosition = FormStartPosition.Manual,
-            Location = new Point(-32000, -32000)
-        };
-        ui.Shown += (s, e) =>
-        {
-            ui.Hide();
-            string nodeErr;
-            if (!NodeLooksUsable(out nodeErr))
-                Balloon("DeepSeek Harness", nodeErr, ToolTipIcon.Warning);
-
-            if (AutoStartOnLaunch && !IsDshRunning())
-            {
-                StartDsh();
-                if (AutoOpenFrontend) autoOpenUntil = DateTime.Now.AddSeconds(AutoOpenSeconds);
-            }
-            UpdateState();
-        };
-
-        tray = new NotifyIcon
-        {
-            Text = "DeepSeek Harness",
-            Icon = iconStopped,
-            Visible = true
-        };
+        tray = new NotifyIcon { Text = "DeepSeek Harness", Icon = iconStopped, Visible = true };
 
         var menu = new ContextMenuStrip();
         statusItem = new ToolStripMenuItem { Enabled = false };
@@ -118,7 +67,7 @@ class DshTray
         tray.ContextMenuStrip = menu;
 
         openItem.Click += (s, e) => OpenFrontend();
-        restartItem.Click += (s, e) => RestartDsh();
+        restartItem.Click += (s, e) => { StopDsh(); WaitPortFree(); StartDsh(); };
         closeItem.Click += (s, e) => { StopDsh(); ExitTray(); };
         tray.DoubleClick += (s, e) => OpenFrontend();
 
@@ -126,55 +75,28 @@ class DshTray
         timer.Tick += (s, e) => UpdateState();
         timer.Start();
 
-        UpdateState();
-        Application.Run(ui);
-    }
-
-    static void RestartDsh()
-    {
-        StopDsh();
-        WaitPortFree();
-        if (AutoOpenFrontend) autoOpenUntil = DateTime.Now.AddSeconds(AutoOpenSeconds);
-        StartDsh();
-    }
-
-    static void OpenFrontend()
-    {
-        string url = !string.IsNullOrEmpty(launchUrl) ? launchUrl : fallbackUrl;
-        OpenUrl(url);
-    }
-
-    static void OpenUrl(string url)
-    {
-        try
+        if (AutoStartOnLaunch && !IsDshRunning())
         {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            StartDsh();
+            if (AutoOpenFrontend) autoOpenUntil = DateTime.Now.AddSeconds(60);
         }
-        catch { }
+
+        UpdateState();
+        Application.Run();
     }
+
+    static void OpenFrontend() { try { Process.Start(launchUrl); } catch { } }
 
     static bool IsDshRunning()
     {
-        try
-        {
-            foreach (var ep in IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners())
-                if (ep.Port == listenPort) return true;
-        }
-        catch { }
+        foreach (var ep in IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners())
+            if (ep.Port == Port) return true;
         return false;
     }
 
     static void StartDsh()
     {
-        if (startingDsh) return;
-        if (IsDshRunning()) return;
-        startingDsh = true;
-        launchUrl = null;
-        lastHostHint = null;
-        listenPort = DefaultPort;
-        fallbackUrl = DefaultUrl;
-        Ui(UpdateState);
-
+        launchUrl = Url;
         try
         {
             var psi = new ProcessStartInfo("cmd.exe", "/c " + StartCommand)
@@ -183,190 +105,49 @@ class DshTray
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                StandardOutputEncoding = Encoding.UTF8,
-                StandardErrorEncoding = Encoding.UTF8,
-                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                RedirectStandardError = true
             };
-            psi.EnvironmentVariables["PATH"] = NodePathEnv();
-            psi.EnvironmentVariables["NO_COLOR"] = "1";
-
-            dshHostProcess = Process.Start(psi);
-            if (dshHostProcess == null)
-            {
-                startingDsh = false;
-                Balloon("DeepSeek Harness", "无法启动 DeepSeek Harness。", ToolTipIcon.Error);
-                return;
-            }
-            dshHostProcess.OutputDataReceived += (s, e) => { if (e.Data != null) OnHostLine(e.Data); };
-            dshHostProcess.ErrorDataReceived += (s, e) => { if (e.Data != null) OnHostLine(e.Data); };
-            dshHostProcess.EnableRaisingEvents = true;
-            dshHostProcess.Exited += (s, e) => Ui(() =>
-            {
-                if (startingDsh && !IsDshRunning())
-                {
-                    startingDsh = false;
-                    string hint = string.IsNullOrEmpty(lastHostHint) ? "npx 进程已退出。" : lastHostHint;
-                    Balloon("DeepSeek Harness", "启动未完成：" + hint, ToolTipIcon.Warning);
-                }
-                if (!IsDshRunning()) startingDsh = false;
-                UpdateState();
-            });
-            dshHostProcess.BeginOutputReadLine();
-            dshHostProcess.BeginErrorReadLine();
+            var p = Process.Start(psi);
+            if (p == null) return;
+            p.OutputDataReceived += OnHostLine;
+            p.ErrorDataReceived += OnHostLine;
+            p.BeginOutputReadLine();
+            p.BeginErrorReadLine();
         }
-        catch (Exception ex)
-        {
-            startingDsh = false;
-            Balloon("DeepSeek Harness", "启动失败：" + ex.Message, ToolTipIcon.Error);
-        }
+        catch { }
     }
 
-    static void OnHostLine(string raw)
+    static void OnHostLine(object s, DataReceivedEventArgs e)
     {
-        string line = AnsiRe.Replace(raw ?? "", "").Trim();
-        if (line.Length == 0) return;
-        lastHostHint = Truncate(line, 180);
-
-        var m = LaunchUrlRe.Match(line);
-        if (!m.Success) return;
-
-        string url = m.Groups[1].Value.Trim().TrimEnd('.', ',', ';');
-        RememberLaunchUrl(url);
-    }
-
-    static void RememberLaunchUrl(string url)
-    {
-        try
-        {
-            var u = new Uri(url);
-            if (u.Port > 0) listenPort = u.Port;
-            fallbackUrl = u.GetLeftPart(UriPartial.Authority) + "/";
-            launchUrl = url;
-        }
-        catch
-        {
-            launchUrl = url;
-        }
-        startingDsh = false;
-        Ui(() =>
-        {
-            if (autoOpenUntil != DateTime.MinValue && AutoOpenFrontend)
-            {
-                autoOpenUntil = DateTime.MinValue;
-                OpenFrontend();
-            }
-            UpdateState();
-        });
+        if (string.IsNullOrEmpty(e.Data)) return;
+        var m = Regex.Match(e.Data, @"dsh web:\s*(https?://[^\s]+)");
+        if (m.Success) launchUrl = m.Groups[1].Value.TrimEnd('.', ',', ';');
     }
 
     static void StopDsh()
     {
-        startingDsh = false;
-        autoOpenUntil = DateTime.MinValue;
-        launchUrl = null;
+        launchUrl = Url;
         try
         {
-            if (dshHostProcess != null && !dshHostProcess.HasExited)
-                RunTaskkill((uint)dshHostProcess.Id);
-        }
-        catch { }
-        try { if (dshHostProcess != null) dshHostProcess.Dispose(); } catch { }
-        dshHostProcess = null;
-        KillDshProcesses();
-        KillPortListeners(listenPort);
-        listenPort = DefaultPort;
-        fallbackUrl = DefaultUrl;
-    }
-
-    static void KillDshProcesses()
-    {
-        try
-        {
-            using (var searcher = new ManagementObjectSearcher("SELECT ProcessId, Name, CommandLine FROM Win32_Process WHERE Name = 'node.exe' OR Name = 'cmd.exe' OR Name = 'npx.exe'"))
-            using (var results = searcher.Get())
+            using (var searcher = new ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process WHERE Name = 'node.exe'"))
             {
-                foreach (ManagementObject mo in results)
+                using (var results = searcher.Get())
                 {
-                    try
+                    foreach (ManagementObject mo in results)
                     {
-                        string name = mo["Name"] == null ? "" : mo["Name"].ToString();
-                        string cl = mo["CommandLine"] == null ? "" : mo["CommandLine"].ToString();
-                        if (IsDshCommandLine(name, cl))
+                        string cl = (mo["CommandLine"] == null) ? "" : mo["CommandLine"].ToString();
+                        if (cl.Replace('\\', '/').IndexOf("@deepseek-ai/dsh", StringComparison.OrdinalIgnoreCase) >= 0)
                             RunTaskkill(Convert.ToUInt32(mo["ProcessId"]));
+                        mo.Dispose();
                     }
-                    catch { }
-                    mo.Dispose();
                 }
             }
         }
         catch { }
-    }
-
-    static bool IsDshCommandLine(string name, string cl)
-    {
-        if (string.IsNullOrEmpty(cl)) return false;
-        string n = name == null ? "" : name.ToLowerInvariant();
-        if (n.Contains("dsh-tray")) return false;
-        string c = cl.Replace('/', '\\').ToLowerInvariant();
-        if (c.Contains("dsh-tray")) return false;
-        if (c.Contains("@deepseek-ai\\dsh")) return true;
-        if (c.Contains("\\dsh.js") || c.Contains("\\dsh.mjs") || c.Contains("\\dsh.cmd")) return true;
-        return false;
-    }
-
-    static void KillPortListeners(int port)
-    {
-        foreach (uint pid in PidsListeningOn(port))
-        {
-            try
-            {
-                var p = Process.GetProcessById((int)pid);
-                string n = (p.ProcessName ?? "").ToLowerInvariant();
-                if (n == "node" || n == "cmd" || n == "npx" || n == "powershell" || n == "pwsh")
-                    RunTaskkill(pid);
-            }
-            catch { }
-        }
-    }
-
-    static List<uint> PidsListeningOn(int port)
-    {
-        var pids = new List<uint>();
-        try
-        {
-            var psi = new ProcessStartInfo("netstat.exe", "-ano -p tcp")
-            {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true
-            };
-            using (var p = Process.Start(psi))
-            {
-                if (p == null) return pids;
-                string output = p.StandardOutput.ReadToEnd();
-                p.WaitForExit(4000);
-                var re = new Regex(@"^\s*TCP\s+\S+:" + port + @"\s+\S+\s+LISTENING\s+(\d+)\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                foreach (Match m in re.Matches(output))
-                {
-                    uint pid;
-                    if (uint.TryParse(m.Groups[1].Value, out pid) && pid > 4 && !pids.Contains(pid))
-                        pids.Add(pid);
-                }
-            }
-        }
-        catch { }
-        return pids;
     }
 
     static void RunTaskkill(uint pid)
     {
-        if (pid <= 4) return;
-        try
-        {
-            if ((uint)Process.GetCurrentProcess().Id == pid) return;
-        }
-        catch { }
         try
         {
             var psi = new ProcessStartInfo("taskkill.exe", "/PID " + pid + " /T /F")
@@ -375,10 +156,8 @@ class DshTray
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
-            using (var p = Process.Start(psi))
-            {
-                if (p != null) p.WaitForExit(4000);
-            }
+            var p = Process.Start(psi);
+            if (p != null) p.WaitForExit(3000);
         }
         catch { }
     }
@@ -386,131 +165,39 @@ class DshTray
     static void WaitPortFree()
     {
         var sw = Stopwatch.StartNew();
-        while (IsDshRunning() && sw.ElapsedMilliseconds < 10000)
-            Thread.Sleep(150);
+        while (IsDshRunning() && sw.ElapsedMilliseconds < 3000)
+            System.Threading.Thread.Sleep(150);
     }
 
     static void UpdateState()
     {
         bool running = IsDshRunning();
-        if (running) startingDsh = false;
-
-        if (startingDsh && !running)
-            statusItem.Text = "正在启动 DeepSeek Harness…";
-        else if (running)
-            statusItem.Text = string.IsNullOrEmpty(launchUrl)
-                ? "DeepSeek Harness 正在运行（未捕获启动链接，如打不开请重启后端）"
-                : "DeepSeek Harness 正在运行";
-        else
-            statusItem.Text = "DeepSeek Harness 已停止";
-
-        Icon want = running ? iconRunning : iconStopped;
-        if (!lastRunningSet || lastRunning != running) tray.Icon = want;
-        lastRunning = running;
-        lastRunningSet = true;
-        tray.Text = running ? "DeepSeek Harness · 运行中" : "DeepSeek Harness · 已停止";
-
-        if (running && autoOpenUntil != DateTime.MinValue && DateTime.Now < autoOpenUntil && !string.IsNullOrEmpty(launchUrl))
+        if (running)
         {
-            autoOpenUntil = DateTime.MinValue;
-            OpenFrontend();
+            statusItem.Text = "DeepSeek Harness 正在运行";
+            if (!lastRunningSet || !lastRunning) tray.Icon = iconRunning;
+            lastRunning = true; lastRunningSet = true;
+            if (autoOpenUntil != DateTime.MinValue && (launchUrl != Url || DateTime.Now >= autoOpenUntil))
+            {
+                autoOpenUntil = DateTime.MinValue;
+                OpenFrontend();
+            }
         }
-        else if (autoOpenUntil != DateTime.MinValue && DateTime.Now >= autoOpenUntil)
+        else
         {
-            autoOpenUntil = DateTime.MinValue;
-            if (running) OpenFrontend();
+            statusItem.Text = "DeepSeek Harness 已停止";
+            if (!lastRunningSet || lastRunning) tray.Icon = iconStopped;
+            lastRunning = false; lastRunningSet = true;
+            if (autoOpenUntil != DateTime.MinValue && DateTime.Now >= autoOpenUntil)
+                autoOpenUntil = DateTime.MinValue;
         }
     }
 
     static void ExitTray()
     {
-        try { if (tray != null) { tray.Visible = false; tray.Dispose(); } } catch { }
-        try { if (appMutex != null) appMutex.Close(); } catch { }
-        try { if (ui != null && !ui.IsDisposed) ui.Close(); } catch { Application.Exit(); }
-    }
-
-    static bool NodeLooksUsable(out string error)
-    {
-        error = null;
-        string ver = ReadCommandOutput("node -v");
-        if (string.IsNullOrEmpty(ver))
-        {
-            error = "未检测到 Node.js。请安装 Node 22.19+ 或 24+，并确保已加入 PATH。";
-            return false;
-        }
-        ver = ver.Trim();
-        if (ver.StartsWith("v") || ver.StartsWith("V")) ver = ver.Substring(1);
-        var parts = ver.Split('.');
-        int major = 0, minor = 0;
-        if (parts.Length > 0) int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out major);
-        if (parts.Length > 1) int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out minor);
-        if (major > 22 || (major == 22 && minor >= 19) || major >= 24) return true;
-        error = "当前 Node.js 为 v" + ver + "，DeepSeek Harness 需要 22.19+ 或 24+。";
-        return false;
-    }
-
-    static string NodePathEnv()
-    {
-        string path = Environment.GetEnvironmentVariable("PATH") ?? "";
-        string nodejs = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "nodejs");
-        if (Directory.Exists(nodejs) && path.IndexOf(nodejs, StringComparison.OrdinalIgnoreCase) < 0)
-            path = nodejs + ";" + path;
-        string nodejs86 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "nodejs");
-        if (Directory.Exists(nodejs86) && path.IndexOf(nodejs86, StringComparison.OrdinalIgnoreCase) < 0)
-            path = nodejs86 + ";" + path;
-        return path;
-    }
-
-    static string ReadCommandOutput(string command)
-    {
-        try
-        {
-            var psi = new ProcessStartInfo("cmd.exe", "/c " + command)
-            {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-            psi.EnvironmentVariables["PATH"] = NodePathEnv();
-            using (var p = Process.Start(psi))
-            {
-                if (p == null) return null;
-                string o = p.StandardOutput.ReadToEnd();
-                p.WaitForExit(5000);
-                return string.IsNullOrWhiteSpace(o) ? null : o.Trim();
-            }
-        }
-        catch { return null; }
-    }
-
-    static void Balloon(string title, string text, ToolTipIcon icon)
-    {
-        Ui(() =>
-        {
-            try { if (tray != null) tray.ShowBalloonTip(6000, title, text, icon); } catch { }
-        });
-    }
-
-    static void Ui(Action a)
-    {
-        try
-        {
-            if (ui != null && ui.IsHandleCreated && ui.InvokeRequired)
-                ui.BeginInvoke(a);
-            else
-                a();
-        }
-        catch
-        {
-            try { a(); } catch { }
-        }
-    }
-
-    static string Truncate(string s, int n)
-    {
-        if (s == null || s.Length <= n) return s;
-        return s.Substring(0, n);
+        tray.Visible = false;
+        tray.Dispose();
+        Application.Exit();
     }
 
     static Icon MakeWhaleIcon(Color color, int size = 32)
@@ -521,8 +208,12 @@ class DshTray
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.Clear(Color.Transparent);
             using (var gp = BuildWhalePath(size / 50.0f))
-            using (var b = new SolidBrush(color))
-                g.FillPath(b, gp);
+            {
+                using (var b = new SolidBrush(color))
+                {
+                    g.FillPath(b, gp);
+                }
+            }
         }
         IntPtr h = bmp.GetHicon();
         var icon = (Icon)Icon.FromHandle(h).Clone();
