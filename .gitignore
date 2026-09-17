@@ -1,5 +1,8 @@
 # 构建产物（exe 走 GitHub Releases 分发）
 *.exe
+*.exe.new
+*.exe.old
+*.exe.new.part
 
 # 编译临时文件
 *.err.txt
